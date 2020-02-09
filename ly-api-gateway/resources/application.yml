@@ -1,0 +1,65 @@
+server:
+  port: 10010
+spring:
+  application:
+    name: api-gateway
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:10086/eureka
+    registry-fetch-interval-seconds: 5
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+    instance-id: ${spring.application.name}:${server.port}
+zuul:
+  prefix: /api # 添加路由前缀
+  retryable: true
+  routes:
+    item-service: /item/** # 将商品微服务映射到/item/**
+  ignored-patterns: /upload/** #忽略不希望路由的URL路径
+  ignored-services: upload-servie # # 忽略upload-service服务
+    
+# ========解决zuul404添加配置=======    
+# actuator监控
+#management:
+#  #  server:
+#  #    # 设置监控服务端口,如果没写默认就是服务器的端口
+#  #    port: 8081
+#  endpoints:
+#    # 设置端点是否可用 默认只有shutdown可用
+#    enabled-by-default: true
+#    web:
+#      # 设置是否暴露端点 默认只有health和info可见
+#      exposure:
+#        # 包括所有端点
+#        include: "*" # 注意需要添加引号
+#        # 排除端点
+#        exclude: shutdown
+#  endpoint:
+#    health:
+#      show-details: always
+#    #可以关闭指定的端点
+#    shutdown:
+#      enabled: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*" #注意这里*要加引号，暴露全部，也可以只暴露相应endpoint
+  endpoint:
+    routes:
+      enabled: true # 默认为true，可以省略
+ribbon:
+  ConnectTimeout: 250 # 连接超时时间(ms)
+  ReadTimeout: 2000 # 通信超时时间(ms)
+  OkToRetryOnAllOperations: true # 是否对所有操作重试
+  MaxAutoRetriesNextServer: 1 # 同一服务不同实例的重试次数
+  MaxAutoRetries: 1 # 同一实例的重试次数
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMillisecond: 10000 # 熔断超时时长：10000ms
