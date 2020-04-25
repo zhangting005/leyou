@@ -97,7 +97,8 @@
 		<module>ly-registry</module>
 		<module>ly-api-gateway</module>
 		<module>ly-item</module>
-    <module>ly-common</module>
-    <module>ly-upload</module>
-  </modules>
+    	<module>ly-common</module>
+    	<module>ly-upload</module>
+    	<module>ly-search</module>
+  	</modules>
 </project>
